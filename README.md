@@ -1,7 +1,7 @@
 # Bill-Manager
 Splitwise Clone application using Javascript.
 
-Feature highlight:
+Application Features:
 <ul>
   <li>Manage Friends (Add/Update/Delete)</li>
   <li>Manage Bills (Add/Update/Delete)</li>
