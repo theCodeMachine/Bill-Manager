@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Bill Manager</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+    <div class="top-nav">
+        <div class="container">
+            <div class="nav-content title">Bill Manager App</div>
+            <div class="nav-content" id="user">Rahul Luthra</div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="column-4">
+                <div class="row border-bottom">
+                    <h2>List of Friends</h2>
+                </div>
+                <div class="row">
+                    <ul class="list">
+                        <li>
+                            <div class="row">
+                                <div class="operations">Operations &nbsp;</div>
+                                <div class="name"><strong>Name</strong>
+                                </div>
+                                <div class="amount"><strong>Owes Me</strong>
+                                </div>
+                            </div>
+
+                        </li>
+
+                    </ul>
+                    <ul class="list" id="flist">
+                    </ul>
+                </div>
+
+            </div>
+            <div class="column-4">
+                <div class="row border-bottom">
+                    <h2>List of Bills</h2>
+                </div>
+                <div class="row">
+                    <ul class="list">
+                        <li>
+                            <div class="row">
+                                <div class="operations">Oprs &nbsp;</div>
+                                <div class="name"><strong>Expense Details</strong>
+                                </div>
+                                <div class="amount"><strong>Owed to Me</strong>
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+                    <ul class="list" id="blist">
+                    </ul>
+                </div>
+            </div>
+            <div class="column-4">
+                <div class="row border-bottom">
+                    <h2>Add Friends</h2>
+                </div>
+                <div class="row">
+                    <ul class="list">
+                        <li>
+                            <div class="row">
+                                <label>Name: &nbsp;
+                                    <input type="text" id="fname" />
+                                </label>
+                                <br>
+                                <br>
+                                <label>Email: &nbsp;
+                                    <input type="text" id="femail" />
+                                </label>
+                                <br>
+                                <br>
+                                <label>Phone: &nbsp;
+                                    <input type="text" id="fphone" />
+                                </label>
+                                <input type="hidden" id="fid" />
+                                <br>
+                                <br> &nbsp;&nbsp;
+                                <button id="fsumit" onclick="addFriend()">Add Friend</button>
+                                <button id="fedit" onclick="editFriend()" style="display:none;">Edit Friend</button>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <br>
+                <div class="row border-bottom">
+                    <h2>Add Bills</h2>
+                </div>
+                <div class="row">
+                    <ul class="list">
+                        <li>
+                            <label>Expense: &nbsp;
+                                <input type="text" id="expense" />
+                            </label>
+                            <br>
+                            <br>
+                            <label>Amount: &nbsp;
+                                <input type="text" id="amount" />
+                            </label>
+                            <br>
+                            <br>
+                            <label>Friends: &nbsp;&nbsp;
+                                <select multiple id="friends" style="width:150px;">
+                                </select>
+                            </label>
+                            <input type="hidden" id="bid" />
+                            <br>
+                            <br> &nbsp;&nbsp;&nbsp;
+                            <button id="bsumit" onclick="addBill()">Add Bill</button>
+                            <button id="bedit" onclick="editBill()" style="display:none;">Edit Bill</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/scripts.js"></script>
+<script>
+    showFriends(BillManager.getFriends());
+    showBills(BillManager.getBills());
+
+    function addFriend() {
+        var fname = document.getElementById("fname").value;
+        var femail = document.getElementById("femail").value;
+        var fphone = document.getElementById("fphone").value;
+
+        document.getElementById("fname").value = "";
+        document.getElementById("femail").value = "";
+        document.getElementById("fphone").value = "";
+
+        BillManager.addFriend(fname, femail, fphone);
+        showBills(BillManager.getBills());
+        showFriends(BillManager.getFriends());
+    }
+
+    function addBill() {
+        var expense = document.getElementById("expense").value;
+        var amount = document.getElementById("amount").value;
+
+        document.getElementById("expense").value = "";
+        document.getElementById("amount").value = "";
+
+        friends = getSelectValues(document.getElementById("friends"));
+
+        BillManager.addBill(friends, expense, amount);
+        showBills(BillManager.getBills());
+        showFriends(BillManager.getFriends());
+    }
+
+    function editFriend() {
+        var fname = document.getElementById("fname").value;
+        var femail = document.getElementById("femail").value;
+        var fphone = document.getElementById("fphone").value;
+        var fid = document.getElementById("fid").value;
+
+        document.getElementById("fname").value = "";
+        document.getElementById("femail").value = "";
+        document.getElementById("fphone").value = "";
+        document.getElementById("fsumit").style.display = 'block';
+        document.getElementById("fedit").style.display = 'none';
+
+        BillManager.editFriend(BillManager.getFriends()[fid], {
+            name: fname,
+            email: femail,
+            phone: fphone
+        });
+        showBills(BillManager.getBills());
+        showFriends(BillManager.getFriends());
+    }
+
+    function editBill() {
+        var expense = document.getElementById("expense").value;
+        var amount = document.getElementById("amount").value;
+        var bid = document.getElementById("bid").value;
+
+        document.getElementById("expense").value = "";
+        document.getElementById("amount").value = "";
+        document.getElementById("bsumit").style.display = 'block';
+        document.getElementById("bedit").style.display = 'none';
+
+        friends = getSelectValues(document.getElementById("friends"));
+
+        if (friends.length == 0) {
+            friends = BillManager.getBills()[bid].contributors;
+        }
+
+        BillManager.editBill(BillManager.getBills()[bid], {
+            expenseDetails: expense,
+            amount: amount,
+            contributors: friends
+        });
+        showFriends(BillManager.getFriends());
+        showBills(BillManager.getBills());
+    }
+
+
+    function editEntry(type, id) {
+        if (type == "friends") {
+            document.getElementById("fname").value = BillManager.getFriends()[id].name;
+            document.getElementById("femail").value = BillManager.getFriends()[id].email;
+            document.getElementById("fphone").value = BillManager.getFriends()[id].phone;
+            document.getElementById("fid").value = id;
+            document.getElementById("fsumit").style.display = 'none';
+            document.getElementById("fedit").style.display = 'block';
+        } else if (type == "bills") {
+            document.getElementById("expense").value = BillManager.getBills()[id].expenseDetails;
+            document.getElementById("amount").value = BillManager.getBills()[id].amount;
+            document.getElementById("bid").value = id;
+            document.getElementById("bsumit").style.display = 'none';
+            document.getElementById("bedit").style.display = 'block';
+        }
+    }
+
+    function deleteEntry(type, id) {
+        if (type == "friends") {
+            BillManager.deleteFriend(BillManager.getFriends()[id]);
+        } else if (type == "bills") {
+            BillManager.deleteBill(BillManager.getBills()[id]);
+        }
+        showFriends(BillManager.getFriends());
+        showBills(BillManager.getBills());
+    }
+
+
+    function showFriends(friends) {
+
+        var x = document.getElementById("friends");
+        var ul = document.getElementById('flist');
+        ul.innerHTML = "";
+        x.options.length = 0;
+        for (var f in friends) {
+            createList('flist', 'friends', f, friends[f].name, friends[f].owes);
+            var option = document.createElement("option");
+            option.text = friends[f].name;
+            option.value = f;
+            x.add(option);
+        }
+    }
+
+    function showBills(bills) {
+        var ul = document.getElementById('blist');
+        ul.innerHTML = "";
+        for (var f in bills) {
+            createList('blist', 'bills', f, bills[f].expenseDetails, bills[f].owed);
+        }
+    }
+
+    function createList(id, type, index, name, amount) {
+        var ul = document.getElementById(id);
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode("Four"));
+        li.setAttribute("id", "element-" + name);
+        ul.appendChild(li);
+        document.getElementById("element-" + name).innerHTML = '<div class="row"><div class="opr"><span onclick="editEntry(\'' + type + '\',' + index + ')" style="cursor:pointer;">edit&nbsp;&nbsp;</span><span onclick="deleteEntry(\'' + type + '\',' + index + ')" style="cursor:pointer;">delete</span></div><div class="name">&nbsp;&nbsp;' + name + '</div><div class="amount">$' + amount + '</div></div>';
+    }
+
+    function getSelectValues(select) {
+        var result = [];
+        var options = select && select.options;
+        var opt;
+
+        for (var i = 0, iLen = options.length; i < iLen; i++) {
+            opt = options[i];
+
+            if (opt.selected) {
+                result.push(BillManager.getFriends()[opt.value]);
+            }
+        }
+        return result;
+    }
+</script>
+
+</html>
